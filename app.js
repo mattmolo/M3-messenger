@@ -1,9 +1,8 @@
 
 //TODO: Grab this from db or local configuration
 let sites = require('./sites.json')
-const {shell} = require('electron')
-const {app} = require('electron')
-const ipc = require('electron').ipcRenderer
+let menu = require('electron-context-menu')
+const {shell, app, ipcRenderer} = require('electron')
 
 let siteElems = []
 let activeSite = 0
@@ -14,14 +13,23 @@ let sidebar = undefined
 
 $(document).ready(() => {
 
-    $('#close').click(() => {
-        ipc.send('close')
+
+    if (process.platform == 'darwin') {
+        $('.left-window-buttons').show()
+    }
+    else {
+        $('.right-window-buttons').show()
+    }
+
+
+    $('.close').click(() => {
+        ipcRenderer.send('close')
     })
-    $('#max').click(() => {
-        ipc.send('maximize')
+    $('.max').click(() => {
+        ipcRenderer.send('maximize')
     })
-    $('#min').click(() => {
-        ipc.send('minimize')
+    $('.min').click(() => {
+        ipcRenderer.send('minimize')
     })
 
 
@@ -74,6 +82,14 @@ $(document).ready(() => {
             shell.openExternal(e.url)
         })
 
+        site.webview[0].addEventListener('new-window', (e) => {
+            shell.openExternal(e.url)
+        })
+
+        menu({
+            window: site.webview[0]
+        })
+
         siteElems.push(site)
 
         // Set up control shortcuts
@@ -102,7 +118,7 @@ $(document).ready(() => {
     selectSite(0);
     $('.selector').show()
 
-    ipc.on('focus', () => {
+    ipcRenderer.on('focus', () => {
         selectSite(activeSite)
     })
 })
@@ -160,6 +176,7 @@ function selectSite(i) {
 function moveSelector(i) {
     const top = 15 + (80*i);
     $('.selector').css('top', `${top}px`)
+    sidebar.scrollTop(top - 15);
 }
 
 function notify(i) {

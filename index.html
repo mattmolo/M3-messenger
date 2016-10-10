@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <link rel="stylesheet" href="./main.css">
+
+        <!-- Clear module, jquery doesn't like it  -->
+        <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script src="./app.js"></script>
+
+        <!-- Set back the module after importing scripts -->
+        <script>if (window.module) module = window.module;</script>
+    </head>
+
+    <body>
+        <div class="titlebar">
+            <p></p>
+            <div id="close">X</div>
+            <div id="max">[]</div>
+            <div id="min">_</div>
+        </div>
+        <div class="frame-container">
+            <div class="sidebar">
+                <div class="selector" style="display: none"></div>
+            </div>
+
+            <div class="container">
+            </div>
+        </div>
+    </body>
+
+    <script>
+        require('./renderer.js')
+    </script>
+</html>

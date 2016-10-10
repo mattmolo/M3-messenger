@@ -5,8 +5,6 @@ const {shell} = require('electron')
 const {app} = require('electron')
 const ipc = require('electron').ipcRenderer
 
-ipc.send('max', '');
-
 let siteElems = []
 let activeSite = 0
 
@@ -103,6 +101,10 @@ $(document).ready(() => {
     // Select the first site, show the sidebar selector
     selectSite(0);
     $('.selector').show()
+
+    ipc.on('focus', () => {
+        selectSite(activeSite)
+    })
 })
 
 
@@ -110,7 +112,7 @@ function selectSite(i) {
 
     let site = siteElems[i]
 
-    if (activeSite >= 0) {
+    if (activeSite >= 0 && activeSite != i) {
         let activeSiteElem = siteElems[activeSite]
 
         // Hide the element, but set a width and height
@@ -166,3 +168,4 @@ function notify(i) {
         siteElems[i].notifier.show()
     }
 }
+

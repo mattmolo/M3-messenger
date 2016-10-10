@@ -15,7 +15,6 @@ html,body {
     -webkit-user-select: none;
 
     /* Hidden until future progess made on titlebar */
-    /*display: none;*/
     -webkit-app-region: drag;
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }

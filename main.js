@@ -19,6 +19,10 @@ function createWindow () {
     })
 
     mainWindow.webContents.openDevTools()
+
+    mainWindow.on('focus', () => {
+        mainWindow.webContents.send('focus')
+    })
 }
 
 // Called when electron finishes startup

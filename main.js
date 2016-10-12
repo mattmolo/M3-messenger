@@ -12,7 +12,7 @@ let mainWindow
 function createWindow () {
     mainWindow = new BrowserWindow({frame: false, width: 800, height: 600})
 
-    mainWindow.loadURL(`file://${__dirname}/index.html`)
+    mainWindow.loadURL(`file://${__dirname}/app/build/index.html`)
 
     mainWindow.on('closed', () => {
         mainWindow = null

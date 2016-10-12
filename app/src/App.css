@@ -1,0 +1,12 @@
+.App {
+  height: 100%;
+  width: 100%;
+}
+
+.App-titlebar {
+    height: 40px;
+}
+
+.App-contents {
+    height: calc(100% - 40px)
+}

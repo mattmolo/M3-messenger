@@ -1,0 +1,43 @@
+.WindowControls-buttons {
+    position: absolute;
+    z-index: 5;
+}
+
+.WindowControls-right {
+    right: 0;
+}
+
+.WindowControls-left {
+    left: 0;
+}
+
+.WindowControls-buttons > div {
+    float: right;
+    height: 24px;
+    width: 24px;
+    margin: 8px 5px;
+    line-height: 24px;
+    background-color: rgba(0,0,0,0);
+    border: none;
+    color: white;
+    cursor: pointer;
+    text-align: center;
+    font-family: monospace;
+    -webkit-app-region: no-drag;
+}
+
+.WindowControls-buttons > div:hover {
+    background-color: rgba(0,0,0,0.5);
+}
+
+.WindowControls-left > .close {
+    margin-left: 10px;
+}
+
+.WindowControls-right > .close {
+    margin-right: 10px;
+}
+
+.WindowControls-buttons > .close:hover {
+    background-color: rgba(255,0,0,0.5);
+}

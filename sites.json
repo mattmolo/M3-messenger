@@ -36,8 +36,8 @@
     },
     {
         "site": "Discord",
-        "url": "https://discordapp.com/channels/@me",
-        "icon": "./icons/discord.png"
+        "url": "https://purdueieeecsociety.slack.com",
+        "icon": "./icons/csociety.png"
     },
     {
         "site": "Messenger",

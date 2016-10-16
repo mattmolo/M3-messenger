@@ -82,10 +82,6 @@ $(document).ready(() => {
             shell.openExternal(e.url)
         })
 
-        site.webview[0].addEventListener('new-window', (e) => {
-            shell.openExternal(e.url)
-        })
-
         menu({
             window: site.webview[0]
         })

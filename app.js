@@ -56,12 +56,15 @@ $(document).ready(() => {
                     sites[activeSite].webview[0].reload()
                 }
             }
+            break
         case 116: // F5
             sites[activeSite].webview[0].reload()
+            break
         case 68: // D
             if (e.ctrlKey || e.metaKey) {
                 ipcRenderer.send('toggle-devtools')
             }
+            break
         }
     })
 

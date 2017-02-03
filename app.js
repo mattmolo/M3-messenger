@@ -43,22 +43,27 @@ $(document).ready(() => {
         ipcRenderer.send('minimize')
     })
 
-    // Ctrl+r to reload the app webview, Ctrl+Shift+R to reload the whole app
+    // Ctrl+r and F5 to reload the app webview
+    // Ctrl+Shift+R to reload the whole app
+    // Ctrl+D to open dev tools
     $(document).keydown((e) => {
-        const r = 82
-        if ((e.ctrlKey || e.metaKey) && e.keyCode == r) {
-            e.shiftKey ? ipcRenderer.send('reload') : sites[activeSite].webview[0].reload()
+        switch (e.keyCode) {
+        case 82: // R
+            if (e.ctrlKey || e.metaKey) {
+                if (e.shiftKey) {
+                    ipcRenderer.send('reload')
+                } else {
+                    sites[activeSite].webview[0].reload()
+                }
+            }
+        case 116: // F5
+            sites[activeSite].webview[0].reload()
+        case 68: // D
+            if (e.ctrlKey || e.metaKey) {
+                ipcRenderer.send('toggle-devtools')
+            }
         }
     })
-
-    // Ctrl+d to toggle dev tools
-    $(document).keydown((e) => {
-        const d = 68
-        if ((e.ctrlKey || e.metaKey) && e.keyCode == d) {
-            ipcRenderer.send('toggle-devtools')
-        }
-    })
-
 
     container = $('.container')
     sidebar = $('.sidebar')
@@ -135,7 +140,6 @@ $(document).ready(() => {
             setInterval(() => {
                 site.webview[0].send(site.service)
             }, 5000)
-
         } else {
             // Wait for 10 seconds before adding page title updated event, because
             // the title updates multiple times when the page is loading

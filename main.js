@@ -42,10 +42,6 @@ function createWindow () {
     mainWindow.on('focus', () => {
         mainWindow.webContents.send('focus')
     })
-
-    const refresh = () => {
-        mainWindow.webContents.send("refresh")
-    }
 }
 
 // Called when electron finishes startup
@@ -69,6 +65,10 @@ ipc.on('maximize', () => {
 
 ipc.on('minimize', () => {
     mainWindow.minimize()
+})
+
+ipc.on('reload', () => {
+    mainWindow.reload()
 })
 
 ipc.on('toggle-devtools', () => {

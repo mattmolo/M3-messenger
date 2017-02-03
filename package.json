@@ -13,6 +13,7 @@
     "electron": "^1.4.1"
   },
   "dependencies": {
-    "electron-context-menu": "^0.6.0"
+    "electron-context-menu": "^0.6.0",
+    "electron-window-state": "^4.0.1"
   }
 }

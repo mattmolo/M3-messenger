@@ -10,10 +10,20 @@ let activeSite = 0
 let container = undefined
 let sidebar = undefined
 
+// List of services that support checking messages via javascript
+// Must contain an event listener that checks the messagse in unreadApi.js
+const supportedCountServices = [
+    'slack',
+    'hangouts',
+    'groupme',
+    'gmail',
+    'inbox',
+    'discord'
+]
 
 $(document).ready(() => {
 
-
+    // Show titlebar buttons on platform specific side
     if (process.platform == 'darwin') {
         $('.left-window-buttons').show()
     }
@@ -21,7 +31,8 @@ $(document).ready(() => {
         $('.right-window-buttons').show()
     }
 
-
+    // Send ipc message on titlebar button clicks
+    // to main process to handle window management
     $('.close').click(() => {
         ipcRenderer.send('close')
     })
@@ -30,6 +41,22 @@ $(document).ready(() => {
     })
     $('.min').click(() => {
         ipcRenderer.send('minimize')
+    })
+
+    // Ctrl+r to reload the app webview, Ctrl+Shift+R to reload the whole app
+    $(document).keydown((e) => {
+        const r = 82
+        if ((e.ctrlKey || e.metaKey) && e.keyCode == r) {
+            e.shiftKey ? ipcRenderer.send('reload') : sites[activeSite].webview[0].reload()
+        }
+    })
+
+    // Ctrl+d to toggle dev tools
+    $(document).keydown((e) => {
+        const d = 68
+        if ((e.ctrlKey || e.metaKey) && e.keyCode == d) {
+            ipcRenderer.send('toggle-devtools')
+        }
     })
 
 
@@ -52,9 +79,17 @@ $(document).ready(() => {
         // Add Ctrl + # Text
         // Can't have a Ctrl + 10
         if (index + 1 < 10) {
-            let mod = (process.platform == 'darwin') ? 'Cmd' : 'Ctrl'
+            const mod = (process.platform == 'darwin') ? 'Cmd' : 'Ctrl'
             sidebar.append(`<p>${mod} + ${index+1}</p>`)
         }
+
+        // Set up control shortcuts
+        $(document).keydown((e) => {
+            const key = 49 + index // Number 1 keycode is 49
+            if ((e.ctrlKey || e.metaKey) && e.keyCode == key) {
+                selectSite(index)
+            }
+        })
 
         // Add notifier div
         site.notifier = $(`<div class="notifier"></div>`)
@@ -71,7 +106,7 @@ $(document).ready(() => {
 
         // Append the webview itself
         site.webview = $(`
-            <webview src="${site.url}"></webview>
+            <webview src="${site.url}" preload="./unreadApi.js" ></webview>
         `)
 
         // Add to the app
@@ -82,38 +117,52 @@ $(document).ready(() => {
             shell.openExternal(e.url)
         })
 
+        // If this is a supported service, call a setInterval that sends
+        // a message to the webview. In unreadApi.js, the listeners are setup
+        // on their service name channel. When called, it will respond with the
+        // message count, which we then use to update the notifier bubble
+        // If it is not supported, setup a listener that checks for page title updates
+        if (supportedCountServices.indexOf(site.service) > -1) {
+            // Listen for webview's response
+            site.webview[0].addEventListener('ipc-message', (event) => {
+                if (event.channel == 'setUnreadCount') {
+                    event.args[0] > 0 ? notify(index) : site.notifier.hide()
+                }
+            })
+
+            // Send a check message count request every 5 seconds on the
+            // site's service name channel
+            setInterval(() => {
+                site.webview[0].send(site.service)
+            }, 5000)
+
+        } else {
+            // Wait for 10 seconds before adding page title updated event, because
+            // the title updates multiple times when the page is loading
+            const loadingWaitTime = 10 * 1000
+
+            setTimeout(() => {
+                site.webview.on('page-title-updated', (e) => {
+                    notify(index)
+                })
+            }, loadingWaitTime)
+        }
+
+        // Context menu
         menu({
             window: site.webview[0]
         })
 
         siteElems.push(site)
 
-        // Set up control shortcuts
-        $(document).keydown((e) => {
-            let key = 49 + index // Number 1 keycode is 49
-            if (e.ctrlKey && e.keyCode == key ||
-                e.metaKey && e.keyCode == key) {
-                selectSite(index)
-            }
-        })
     })
-
-    // Wait for 5 seconds before adding page title updated event, because
-    // the title updates multiple times when the page is loading
-    const loadingWaitTime = 5 * 1000
-
-    setTimeout(() => {
-        siteElems.forEach((site, i) => {
-            site.webview.on('page-title-updated', (e) => {
-                notify(i)
-            })
-        })
-    }, loadingWaitTime)
 
     // Select the first site, show the sidebar selector
     selectSite(0);
     $('.selector').show()
 
+    // Call active site on focus, this helps focus textboxes
+    // when switching between windows
     ipcRenderer.on('focus', () => {
         selectSite(activeSite)
     })
@@ -135,8 +184,14 @@ function selectSite(i) {
         activeSiteElem.frame.css('height', container.height())
         activeSiteElem.frame.addClass('hidden')
 
-        // Clear the notifier before leaving, if it's shown for some reason
-        activeSiteElem.notifier.hide()
+        // Check and show the notifier when leaving if supported service
+        // otherwise clear it if it is checked by title updates
+        if (supportedCountServices.indexOf(site.service) > -1) {
+            activeSiteElem.webview[0].send(activeSiteElem.service)
+        } else {
+            // Clear the notifier before leaving, if it's shown for some reason
+            activeSiteElem.notifier.hide()
+        }
 
         // Darken the site icon
         activeSiteElem.selector.find('img').addClass('dark')
@@ -170,7 +225,21 @@ function selectSite(i) {
 }
 
 function moveSelector(i) {
-    const top = 15 + (80*i);
+    /* This calculates the y position of the selection slider. A site with the
+    * hotkey text is defined with withText and without the hotkey text is
+    * defined with withoutText. After 9 items in the list, there cannot be
+    * a Ctrl+10 hotkey, so we stop putting the text. This takes into account
+    * the offset after 9 sites (which is why it's weird..)
+    */
+    const topOffset = 15;
+
+    const withTextMultiple = 80;
+    const withoutTextMultiple = 55;
+
+    const withTextCount = (i <= 9 ? i : 9);
+    const withoutTextCount = (i > 9 ? i-9 : 0);
+
+    const top = topOffset + (withTextMultiple*withTextCount + withoutTextCount*withoutTextMultiple)
     $('.selector').css('top', `${top}px`)
     sidebar.scrollTop(top - 15);
 }

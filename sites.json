@@ -2,47 +2,56 @@
     {
         "site": "Gmail",
         "url": "https://mail.google.com/",
-        "icon": "./icons/gmail.png"
+        "icon": "./icons/gmail.png",
+        "service": "gmail"
     },
     {
         "site": "Hangouts",
         "url": "https://hangouts.google.com/",
-        "icon": "./icons/hangouts.png"
+        "icon": "./icons/hangouts.png",
+        "service": "hangouts"
     },
     {
         "site": "GroupMe",
         "url": "https://app.groupme.com/chats",
-        "icon": "./icons/groupme.png"
+        "icon": "./icons/groupme.png",
+        "service": "groupme"
     },
     {
         "site": "Purdue ROV",
         "url": "https://purduerov.slack.com",
-        "icon": "./icons/rov.png"
+        "icon": "./icons/rov.png",
+        "service": "slack"
     },
     {
         "site": "Purdue IEEE",
         "url": "https://purdueieee.slack.com",
-        "icon": "./icons/ieee.png"
+        "icon": "./icons/ieee.png",
+        "service": "slack"
     },
     {
         "site": "Dolphins",
         "url": "https://illuminatidolphins.slack.com",
-        "icon": "./icons/dolphins.png"
-    },
-    {
-        "site": "PCL LAB",
-        "url": "https://pcllab.slack.com",
-        "icon": "./icons/slack.png"
+        "icon": "./icons/dolphins.png",
+        "service": "slack"
     },
     {
         "site": "Computer Society",
         "url": "https://purdueieeecsociety.slack.com",
-        "icon": "./icons/csociety.png"
+        "icon": "./icons/csociety.png",
+        "service": "slack"
     },
     {
         "site": "Messenger",
         "url": "https://www.messenger.com/",
-        "icon": "./icons/messenger.png"
+        "icon": "./icons/messenger.png",
+        "service": "facebook"
+    },
+    {
+        "site": "Discord",
+        "url": "https://discordapp.com/channels/@me",
+        "icon": "./icons/discord.png",
+        "service": "discord"
     }
 ]
 

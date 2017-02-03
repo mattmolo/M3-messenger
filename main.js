@@ -5,12 +5,33 @@ const ipc = electron.ipcMain
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
 
+// Module that keeps the window position State
+const WindowStateKeeper = require('electron-window-state');
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
 function createWindow () {
-    mainWindow = new BrowserWindow({frame: false, width: 800, height: 600})
+
+    // Set up browser window, with the window state keeper.
+    // Window state keeper will remember the position of the window
+    // when last closed
+
+    let mainWindowState = WindowStateKeeper({
+        defaultWidth: 800,
+        defaultWidth: 600
+    })
+
+    mainWindow = new BrowserWindow({
+        frame: false,
+        width: mainWindowState.width,
+        height: mainWindowState.height,
+        x: mainWindowState.x,
+        y: mainWindowState.y
+    })
+
+    mainWindowState.manage(mainWindow)
 
     mainWindow.loadURL(`file://${__dirname}/index.html`)
 
@@ -18,11 +39,13 @@ function createWindow () {
         mainWindow = null
     })
 
-    mainWindow.webContents.openDevTools()
-
     mainWindow.on('focus', () => {
         mainWindow.webContents.send('focus')
     })
+
+    const refresh = () => {
+        mainWindow.webContents.send("refresh")
+    }
 }
 
 // Called when electron finishes startup
@@ -34,6 +57,7 @@ app.on('window-all-closed', app.quit)
 ipc.on('close', () => {
     mainWindow.close()
 })
+
 ipc.on('maximize', () => {
     if (mainWindow.isMaximized()) {
         mainWindow.unmaximize()
@@ -42,7 +66,12 @@ ipc.on('maximize', () => {
         mainWindow.maximize()
     }
 })
+
 ipc.on('minimize', () => {
     mainWindow.minimize()
+})
+
+ipc.on('toggle-devtools', () => {
+    mainWindow.webContents.toggleDevTools()
 })
 

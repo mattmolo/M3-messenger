@@ -7,10 +7,10 @@ html,body {
 
 .titlebar {
     width: 100%;
-    height: 40px;
+    height: 30px;
     background-color: #121219;
     color: white;
-    line-height: 40px;
+    line-height: 30px;
     font-family: Sans-serif;
     -webkit-user-select: none;
     -webkit-app-region: drag;
@@ -43,10 +43,10 @@ html,body {
 
 .window-buttons > div {
     float: right;
-    height: 24px;
-    width: 24px;
-    margin: 8px 5px;
-    line-height: 24px;
+    height: 30px;
+    width: 48px;
+    margin: 0;
+    line-height: 30px;
     background-color: rgba(0,0,0,0);
     border: none;
     color: white;
@@ -56,15 +56,7 @@ html,body {
     -webkit-app-region: no-drag;
 }
 .window-buttons > div:hover {
-    background-color: rgba(0,0,0,0.5);
-}
-
-.left-window-buttons > .close {
-    margin-left: 10px;
-}
-
-.right-window-buttons > .close {
-    margin-right: 10px;
+    background-color: rgba(255,255,255,0.2);
 }
 
 .window-buttons > .close:hover {
@@ -73,7 +65,7 @@ html,body {
 
 .frame-container {
     width: 100%;
-    height: calc(100% - 40px);
+    height: calc(100% - 30px);
     position: relative;
     overflow: hidden;
 }

@@ -11,7 +11,7 @@ let container = undefined
 let sidebar = undefined
 
 // List of services that support checking messages via javascript
-// Must contain an event listener that checks the messagse in unreadApi.js
+// Must contain an event listener that checks the messages in unreadApi.js
 const supportedCountServices = [
     'slack',
     'hangouts',
@@ -129,7 +129,6 @@ $(document).ready(() => {
         // a message to the webview. In unreadApi.js, the listeners are setup
         // on their service name channel. When called, it will respond with the
         // message count, which we then use to update the notifier bubble
-        // If it is not supported, setup a listener that checks for page title updates
         if (supportedCountServices.indexOf(site.service) > -1) {
             // Listen for webview's response
             site.webview[0].addEventListener('ipc-message', (event) => {
@@ -137,23 +136,26 @@ $(document).ready(() => {
                     event.args[0] > 0 ? notify(index) : site.notifier.hide()
                 }
             })
-
-            // Send a check message count request every 5 seconds on the
-            // site's service name channel
-            setInterval(() => {
-                site.webview[0].send(site.service)
-            }, 5000)
-        } else {
-            // Wait for 10 seconds before adding page title updated event, because
-            // the title updates multiple times when the page is loading
-            const loadingWaitTime = 10 * 1000
-
-            setTimeout(() => {
-                site.webview.on('page-title-updated', (e) => {
-                    notify(index)
-                })
-            }, loadingWaitTime)
         }
+
+        // Setup a listener to page title updates, which probably means there is a notification
+        // If it's a supported service, send a request to check if there are notifications, otherwise
+        // add the notification bubble. Supported services are also checked every 10 seconds for 
+        // good measure, but this helps to get notification immediately
+
+        // Wait for 10 seconds before adding page title updated event, because
+        // the title updates multiple times when the page is loading
+        const loadingWaitTime = 10 * 1000
+
+        setTimeout(() => {
+            site.webview.on('page-title-updated', (e) => {
+                if (supportedCountServices.indexOf(site.service) > -1) {
+                    site.webview[0].send(site.service)
+                } else {
+                    notify(index)
+                }
+            })
+        }, loadingWaitTime)
 
         // Context menu
         menu({
@@ -164,6 +166,14 @@ $(document).ready(() => {
 
     })
 
+    // Send a check message count request every 10 seconds on the
+    // site's service name channel
+    setInterval(() => {
+        sites.forEach((site) => {
+            site.webview[0].send(site.service)
+        })
+    }, 10*1000)
+
     // Select the first site, show the sidebar selector
     selectSite(0);
     $('.selector').show()
@@ -173,6 +183,21 @@ $(document).ready(() => {
     ipcRenderer.on('focus', () => {
         selectSite(activeSite)
     })
+
+    // On Windows 10 (8.1? maybe), it hides 5px when the window is maximized. So,
+    // listen for when the window has been maximized or unmaximized to add a 5px border
+    // so that the titlebar, and notification bubbles on the left are fully visible.
+    // Also, send a query to check the status once this finishes loading, because a window
+    // that starts off maximized does not send an event update
+    ipcRenderer.on('maximized', () => {
+        $('body').addClass('maximized')
+    })
+
+    ipcRenderer.on('unmaximized', () => {
+        $('body').removeClass('maximized')
+    })
+
+    ipcRenderer.send('maximized-status')
 })
 
 

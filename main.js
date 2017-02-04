@@ -42,6 +42,14 @@ function createWindow () {
     mainWindow.on('focus', () => {
         mainWindow.webContents.send('focus')
     })
+
+    mainWindow.on('maximize', () => {
+        mainWindow.webContents.send('maximized')
+    })
+
+    mainWindow.on('unmaximize', () => {
+        mainWindow.webContents.send('unmaximized')
+    })
 }
 
 // Called when electron finishes startup
@@ -75,3 +83,8 @@ ipc.on('toggle-devtools', () => {
     mainWindow.webContents.toggleDevTools()
 })
 
+ipc.on('maximized-status', () => {
+    if (mainWindow.isMaximized()) {
+        mainWindow.webContents.send('maximized')
+    }
+})

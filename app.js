@@ -9,6 +9,7 @@ let activeSite = 0
 
 let container = undefined
 let sidebar = undefined
+let isMacOS = process.platform == 'darwin'
 
 // List of services that support checking messages via javascript
 // Must contain an event listener that checks the messages in unreadApi.js
@@ -24,7 +25,7 @@ const supportedCountServices = [
 $(document).ready(() => {
 
     // Show titlebar buttons on platform specific side
-    if (process.platform == 'darwin') {
+    if (isMacOS) {
         $('.left-window-buttons').show()
     }
     else {
@@ -47,24 +48,37 @@ $(document).ready(() => {
     // Ctrl+Shift+R to reload the whole app
     // Ctrl+D to open dev tools
     $(document).keydown((e) => {
-        switch (e.keyCode) {
-        case 82: // R
-            if (e.ctrlKey || e.metaKey) {
-                if (e.shiftKey) {
-                    ipcRenderer.send('reload')
-                } else {
-                    sites[activeSite].webview[0].reload()
-                }
-            }
-            break
-        case 116: // F5
+        if (e.keyCode == 116) { // F5, Reload Current Webview
             sites[activeSite].webview[0].reload()
-            break
-        case 68: // D
-            if (e.ctrlKey || e.metaKey) {
+        }
+
+        if ((e.ctrlKey && !isMacOS) || (e.metaKey && isMacOS)) {
+            switch (String.fromCharCode(e.keyCode)) {
+            case 'R':
+                e.shiftKey ? ipcRenderer.send('reload') : sites[activeSite].webview[0].reload()
+                break
+            case 'D':
                 ipcRenderer.send('toggle-devtools')
+                break
+            case 'X':
+                siteElems[activeSite].webview[0].cut()
+                break
+            case 'C':
+                siteElems[activeSite].webview[0].copy()
+                break
+            case 'V':
+                siteElems[activeSite].webview[0].paste()
+                break
+            case 'A':
+                siteElems[activeSite].webview[0].selectAll()
+                break
+            case 'Y':
+                siteElems[activeSite].webview[0].redo()
+                break
+            case 'Z':
+                siteElems[activeSite].webview[0].undo()
+                break
             }
-            break
         }
     })
 
@@ -140,7 +154,7 @@ $(document).ready(() => {
 
         // Setup a listener to page title updates, which probably means there is a notification
         // If it's a supported service, send a request to check if there are notifications, otherwise
-        // add the notification bubble. Supported services are also checked every 10 seconds for 
+        // add the notification bubble. Supported services are also checked every 10 seconds for
         // good measure, but this helps to get notification immediately
 
         // Wait for 10 seconds before adding page title updated event, because
@@ -189,15 +203,17 @@ $(document).ready(() => {
     // so that the titlebar, and notification bubbles on the left are fully visible.
     // Also, send a query to check the status once this finishes loading, because a window
     // that starts off maximized does not send an event update
-    ipcRenderer.on('maximized', () => {
-        $('body').addClass('maximized')
-    })
+    if (process.platform == 'win32') {
+        ipcRenderer.on('maximized', () => {
+            $('body').addClass('maximized')
+        })
 
-    ipcRenderer.on('unmaximized', () => {
-        $('body').removeClass('maximized')
-    })
+        ipcRenderer.on('unmaximized', () => {
+            $('body').removeClass('maximized')
+        })
 
-    ipcRenderer.send('maximized-status')
+        ipcRenderer.send('maximized-status')
+    }
 })
 
 

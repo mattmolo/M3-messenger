@@ -11,7 +11,6 @@ npm install && npm start
 
 Use [electron-packager](https://github.com/electron-userland/electron-packager) to package the app:
 ```bash
-# Build all platforms
-# electron-packager <source-dir> <name> <all-platforms>
-electron-packager . Messenger --all
+# electron-packager <source-dir>
+electron-packager .
 ```

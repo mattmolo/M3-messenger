@@ -1,7 +1,6 @@
 
 //TODO: Grab this from db or local configuration
 let sites = require('./sites.json')
-let menu = require('electron-context-menu')
 const {shell, app, ipcRenderer} = require('electron')
 
 let siteElems = []
@@ -128,7 +127,7 @@ $(document).ready(() => {
 
         // Append the webview itself
         site.webview = $(`
-            <webview src="${site.url}" preload="./unreadApi.js" ></webview>
+            <webview src="${site.url}" preload="./preload.js" ></webview>
         `)
 
         // Add to the app
@@ -170,11 +169,6 @@ $(document).ready(() => {
                 }
             })
         }, loadingWaitTime)
-
-        // Context menu
-        menu({
-            window: site.webview[0]
-        })
 
         siteElems.push(site)
 

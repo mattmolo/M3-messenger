@@ -2,15 +2,13 @@
 
 Set up multiple messenger services, and switch between them in one window.
 
-## To Use
-
+## Development
 ```bash
 # Install and run the app
 npm install && npm start
 ```
 
-Use [electron-packager](https://github.com/electron-userland/electron-packager) to package the app:
+## Building
 ```bash
-# electron-packager <source-dir>
-electron-packager .
+npm run build
 ```

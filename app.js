@@ -151,6 +151,19 @@ $(document).ready(() => {
             })
         }
 
+        if (site.service == 'slack') {
+            site.webview.on('did-finish-load', (event) => {
+                console.log('checking...')
+                site.webview[0].send("slack-icon")
+            })
+            site.webview[0].addEventListener('ipc-message', (event) => {
+                if (event.channel == 'slackTeamIcon') {
+                    console.log(event.args[0])
+                    site.selector[0].children[0].src = event.args[0]
+                }
+            })
+        }
+
         // Setup a listener to page title updates, which probably means there is a notification
         // If it's a supported service, send a request to check if there are notifications, otherwise
         // add the notification bubble. Supported services are also checked every 10 seconds for

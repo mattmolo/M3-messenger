@@ -17,6 +17,7 @@ const { ipcRenderer } = require("electron");
 */
 
 ipcRenderer.on("slack", () => {
+    /*
     var count = 0
     $(".unread_msgs").each(function() {
         count += isNaN(parseInt($(this).html())) ? 0 : parseInt($(this).html())
@@ -24,8 +25,27 @@ ipcRenderer.on("slack", () => {
     $(".unread_highlights").each(function() {
         count += isNaN(parseInt($(this).html())) ? 0 : parseInt($(this).html())
     });
+    */
+
+    var count = TS.model.all_unread_cnt - TS.model.all_unread_cnt_to_exclude;
 
     ipcRenderer.sendToHost("setUnreadCount", count)
+})
+
+ipcRenderer.on("slack-icon", () => {
+
+    var checked = 0
+    var interval = setInterval(() => {
+        try {
+            var teamIcon = TS.model.team.icon.image_230
+            ipcRenderer.sendToHost("slackTeamIcon", teamIcon)
+            clearInterval(interval)
+        } catch (e) {
+            if (checked++ > 40) {
+                clearInterval(interval)
+            }
+        }
+    }, 500)
 })
 
 ipcRenderer.on("hangouts", () => {

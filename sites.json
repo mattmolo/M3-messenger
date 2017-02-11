@@ -20,25 +20,37 @@
     {
         "site": "Purdue ROV",
         "url": "https://purduerov.slack.com",
-        "icon": "./icons/rov.png",
+        "icon": "./icons/slack.png",
         "service": "slack"
     },
     {
         "site": "Purdue IEEE",
         "url": "https://purdueieee.slack.com",
-        "icon": "./icons/ieee.png",
+        "icon": "./icons/slack.png",
         "service": "slack"
     },
     {
         "site": "Dolphins",
         "url": "https://illuminatidolphins.slack.com",
-        "icon": "./icons/dolphins.png",
+        "icon": "./icons/slack.png",
         "service": "slack"
     },
     {
         "site": "Computer Society",
         "url": "https://purdueieeecsociety.slack.com",
-        "icon": "./icons/csociety.png",
+        "icon": "./icons/slack.png",
+        "service": "slack"
+    },
+    {
+        "site": "Computer Society",
+        "url": "https://sedshackathon.slack.com",
+        "icon": "./icons/slack.png",
+        "service": "slack"
+    },
+    {
+        "site": "Computer Society",
+        "url": "https://pcllab.slack.com",
+        "icon": "./icons/slack.png",
         "service": "slack"
     },
     {

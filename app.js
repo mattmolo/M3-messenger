@@ -48,33 +48,42 @@ $(document).ready(() => {
     // Ctrl+D to open dev tools
     $(document).keydown((e) => {
         if (e.keyCode == 116) { // F5, Reload Current Webview
+            e.preventDefault()
             sites[activeSite].webview[0].reload()
         }
 
         if ((e.ctrlKey && !isMacOS) || (e.metaKey && isMacOS)) {
             switch (String.fromCharCode(e.keyCode)) {
             case 'R':
+                e.preventDefault()
                 e.shiftKey ? ipcRenderer.send('reload') : sites[activeSite].webview[0].reload()
                 break
             case 'D':
+                e.preventDefault()
                 ipcRenderer.send('toggle-devtools')
                 break
             case 'X':
+                e.preventDefault()
                 siteElems[activeSite].webview[0].cut()
                 break
             case 'C':
+                e.preventDefault()
                 siteElems[activeSite].webview[0].copy()
                 break
             case 'V':
+                e.preventDefault()
                 siteElems[activeSite].webview[0].paste()
                 break
             case 'A':
+                e.preventDefault()
                 siteElems[activeSite].webview[0].selectAll()
                 break
             case 'Y':
+                e.preventDefault()
                 siteElems[activeSite].webview[0].redo()
                 break
             case 'Z':
+                e.preventDefault()
                 siteElems[activeSite].webview[0].undo()
                 break
             }

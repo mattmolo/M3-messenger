@@ -1,13 +1,15 @@
 {
-  "name": "Messenger",
+  "name": "M3-messenger",
   "version": "1.0.0",
-  "description": "A Multi-Messenger Application",
+  "description": "Matt Molo's Multi-Messenger",
   "main": "main.js",
   "scripts": {
-    "start": "./node_modules/.bin/electron-rebuild && electron .",
-    "build": "./node_modules/.bin/electron-rebuild && ./node_modules/.bin/electron-packager ."
+    "dev": "electron-rebuild && electron .",
+    "package-mac":   "electron-rebuild && electron-packager . --overwrite --platform=darwin --arch=x64 --icon=icon/Icon.icns --prune=true",
+    "package-win":   "electron-rebuild && electron-packager . --overwrite --platform=win32  --arch=x64 --icon=icon/Icon.ico --prune=true",
+    "package-linux": "electron-rebuild && electron-packager . --overwrite --platform=linux  --arch=x64 --icon=icon/Icon_1024x1024.png --prune=true"
   },
-  "repository": "https://github.com/mattmolo",
+  "repository": "https://github.com/mattmolo/M3-messenger",
   "author": "Matt Molo",
   "license": "MIT",
   "devDependencies": {

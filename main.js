@@ -28,7 +28,8 @@ function createWindow () {
         width: mainWindowState.width,
         height: mainWindowState.height,
         x: mainWindowState.x,
-        y: mainWindowState.y
+        y: mainWindowState.y,
+        icon: "./icon/Icon_1024x1024.png"
     })
 
     mainWindowState.manage(mainWindow)

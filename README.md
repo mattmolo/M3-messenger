@@ -1,4 +1,4 @@
-![M3 Icon](Icon_256x256.png "M3 Icon")
+![M3 Icon](https://raw.githubusercontent.com/mattmolo/messenger/master/icon/Icon_256x256.png "M3 Icon")
 
 # M3-messenger
 

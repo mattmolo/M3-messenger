@@ -106,7 +106,7 @@ $(document).ready(() => {
 
         // Add notifier div
         site.notifier = $(`<div class="notifier"></div>`)
-        site.notifier.css('top', 25 + (65*(index)))
+        site.notifier.css('top', 10 + (65*(index)))
         site.notifier.hide()
         sidebar.append(site.notifier)
 
@@ -263,7 +263,7 @@ function moveSelector(i) {
      * will take up 'iconOffset' pixels, so the formula for where it should go is
      * topOffset + iconOffset*i
     */
-    const topOffset = 25
+    const topOffset = 10
     const iconOffset = 65
 
     const top = topOffset + iconOffset*i

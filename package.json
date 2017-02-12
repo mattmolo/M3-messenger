@@ -5,8 +5,8 @@
   "main": "main.js",
   "scripts": {
     "dev": "electron-rebuild && electron .",
-    "package-mac":   "electron-rebuild && electron-packager . --overwrite --platform=darwin --arch=x64 --icon=icon/Icon.icns --prune=true",
-    "package-win":   "electron-rebuild && electron-packager . --overwrite --platform=win32  --arch=x64 --icon=icon/Icon.ico --prune=true",
+    "package-mac":   "electron-rebuild && electron-packager . --overwrite --platform=darwin --arch=x64 --icon=icon/Icon_macOS.icns --prune=true",
+    "package-win":   "electron-rebuild && electron-packager . --overwrite --platform=win32  --arch=x64 --icon=icon/Icon_Win.ico --prune=true",
     "package-linux": "electron-rebuild && electron-packager . --overwrite --platform=linux  --arch=x64 --icon=icon/Icon_1024x1024.png --prune=true"
   },
   "repository": "https://github.com/mattmolo/M3-messenger",

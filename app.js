@@ -8,14 +8,13 @@ let activeSite = 0
 
 let container = undefined
 let sidebar = undefined
-let isMacOS = process.platform == 'darwin'
+let isMacOS = (process.platform == 'darwin')
 
 // List of services that support checking messages via javascript
 // Must contain an event listener that checks the messages in unreadApi.js
 const supportedCountServices = [
     'slack',
     'hangouts',
-    'groupme',
     'gmail',
     'inbox',
     'discord'
@@ -26,10 +25,7 @@ $(document).ready(() => {
     // Show titlebar buttons on platform specific side
     if (isMacOS) {
         $('.left-window-buttons').show()
-    }
-    else {
-        $('.right-window-buttons').show()
-    }
+    } else $('.right-window-buttons').show()
 
     // Send ipc message on titlebar button clicks
     // to main process to handle window management
@@ -87,6 +83,10 @@ $(document).ready(() => {
                 siteElems[activeSite].webview[0].undo()
                 break
             }
+            if (e.keyCode >= 49 && e.keyCode <= 57) {
+                e.preventDefault()
+                selectSite(e.keyCode - 49)
+            }
         }
     })
 
@@ -101,29 +101,12 @@ $(document).ready(() => {
                 <img class="dark" src="${site.icon}">
             </div>
         `)
-        site.selector.click(() => {
-            selectSite(index);
-        })
+        site.selector.click(() => selectSite(index))
         sidebar.append(site.selector)
-
-        // Add Ctrl + # Text
-        // Can't have a Ctrl + 10
-        if (index + 1 < 10) {
-            const mod = (process.platform == 'darwin') ? 'Cmd' : 'Ctrl'
-            sidebar.append(`<p>${mod} + ${index+1}</p>`)
-        }
-
-        // Set up control shortcuts
-        $(document).keydown((e) => {
-            const key = 49 + index // Number 1 keycode is 49
-            if ((e.ctrlKey || e.metaKey) && e.keyCode == key) {
-                selectSite(index)
-            }
-        })
 
         // Add notifier div
         site.notifier = $(`<div class="notifier"></div>`)
-        site.notifier.css('top', 15 + (80*(index)))
+        site.notifier.css('top', 25 + (65*(index)))
         site.notifier.hide()
         sidebar.append(site.notifier)
 
@@ -143,9 +126,9 @@ $(document).ready(() => {
         site.frame.append(site.webview)
         container.append(site.frame)
 
-        site.webview[0].addEventListener('new-window', (e) => {
-            shell.openExternal(e.url)
-        })
+        site.webview[0].addEventListener(
+            'new-window', (event) => shell.openExternal(event.url)
+        )
 
         // If this is a supported service, call a setInterval that sends
         // a message to the webview. In unreadApi.js, the listeners are setup
@@ -170,7 +153,7 @@ $(document).ready(() => {
         const loadingWaitTime = 10 * 1000
 
         setTimeout(() => {
-            site.webview.on('page-title-updated', (e) => {
+            site.webview.on('page-title-updated', (event) => {
                 if (supportedCountServices.indexOf(site.service) > -1) {
                     site.webview[0].send(site.service)
                 } else {
@@ -192,14 +175,12 @@ $(document).ready(() => {
     }, 10*1000)
 
     // Select the first site, show the sidebar selector
-    selectSite(0);
+    selectSite(0)
     $('.selector').show()
 
     // Call active site on focus, this helps focus textboxes
     // when switching between windows
-    ipcRenderer.on('focus', () => {
-        selectSite(activeSite)
-    })
+    ipcRenderer.on('focus', () => selectSite(activeSite))
 
     // On Windows 10 (8.1? maybe), it hides 5px when the window is maximized. So,
     // listen for when the window has been maximized or unmaximized to add a 5px border
@@ -221,6 +202,8 @@ $(document).ready(() => {
 
 
 function selectSite(i) {
+    // Bail if we are selecting a site that doesn't exist
+    if (i >= siteElems.length) return
 
     let site = siteElems[i]
 
@@ -253,8 +236,8 @@ function selectSite(i) {
     site.frame.removeClass('hidden')
 
     // Remove width and height css added when hiding it
-    site.frame.css('width', '');
-    site.frame.css('height', '');
+    site.frame.css('width', '')
+    site.frame.css('height', '')
 
     // Focus puts you back into the app, not on the sidebar
     site.webview.focus()
@@ -272,27 +255,20 @@ function selectSite(i) {
     site.notifier.hide()
 
     moveSelector(i)
-    activeSite = i;
+    activeSite = i
 }
 
 function moveSelector(i) {
-    /* This calculates the y position of the selection slider. A site with the
-    * hotkey text is defined with withText and without the hotkey text is
-    * defined with withoutText. After 9 items in the list, there cannot be
-    * a Ctrl+10 hotkey, so we stop putting the text. This takes into account
-    * the offset after 9 sites (which is why it's weird..)
+    /* This calculates the y position of the selection slider. Each icon for a site
+     * will take up 'iconOffset' pixels, so the formula for where it should go is
+     * topOffset + iconOffset*i
     */
-    const topOffset = 15;
+    const topOffset = 25
+    const iconOffset = 65
 
-    const withTextMultiple = 80;
-    const withoutTextMultiple = 55;
-
-    const withTextCount = (i <= 9 ? i : 9);
-    const withoutTextCount = (i > 9 ? i-9 : 0);
-
-    const top = topOffset + (withTextMultiple*withTextCount + withoutTextCount*withoutTextMultiple)
+    const top = topOffset + iconOffset*i
     $('.selector').css('top', `${top}px`)
-    sidebar.scrollTop(top - 15);
+    sidebar.scrollTop(top - 15)
 }
 
 function notify(i) {
@@ -301,4 +277,3 @@ function notify(i) {
         siteElems[i].notifier.show()
     }
 }
-

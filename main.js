@@ -6,7 +6,7 @@ const ipc = electron.ipcMain
 const BrowserWindow = electron.BrowserWindow
 
 // Module that keeps the window position State
-const WindowStateKeeper = require('electron-window-state');
+const WindowStateKeeper = require('electron-window-state')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.

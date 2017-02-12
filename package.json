@@ -13,13 +13,13 @@
   "author": "Matt Molo",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^1.4.1",
+    "electron": "^1.4.15",
     "electron-packager": "^8.5.1",
     "electron-rebuild": "^1.5.7"
   },
   "dependencies": {
     "electron-editor-context-menu": "^1.1.1",
     "electron-spell-check-provider": "^1.0.0",
-    "electron-window-state": "^4.0.1"
+    "electron-window-state": "^4.0.2"
   }
 }

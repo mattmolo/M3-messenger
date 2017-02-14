@@ -6,6 +6,29 @@
 
 const { ipcRenderer } = require("electron");
 
+/* This redefines the notification class, to capture the 
+ * notification and allows us to make edits. In this case,
+ * we can set the icon to the team's slack icon. We'd also
+ * be able to change the on click handler, so that we can
+ * switch to the right site when it is clicked.
+ */
+const OldNotify = window.Notification;
+class NewNotify {
+    constructor(title, options) {
+        options.icon = TS.model.team.icon.image_132
+        return new OldNotify(title, options);
+    }
+}
+
+NewNotify.prototype.requestPermission = OldNotify.requestPermission.bind(OldNotify);
+Object.defineProperty(NewNotify, 'permission', {
+    get: () => {
+        return OldNotify.permission;
+    }
+});
+
+window.Notification = NewNotify;
+
 /*
  * This code contains event callbacks, that can check the webpage
  * for unread counts. If the service is not listed here, the app

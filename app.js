@@ -42,53 +42,67 @@ $(document).ready(() => {
     // Ctrl+r and F5 to reload the app webview
     // Ctrl+Shift+R to reload the whole app
     // Ctrl+D to open dev tools
-    $(document).keydown((e) => {
+    function keydown(e) {
         if (e.keyCode == 116) { // F5, Reload Current Webview
-            e.preventDefault()
+            if (e.preventDefault) e.preventDefault()
             sites[activeSite].webview[0].reload()
+        }
+
+        // Tab switching
+        if ((e.ctrlKey && e.keyCode == '9')) {
+            let nextSite = activeSite + e.shiftKey ? -1 : 1;
+
+            if (activeSite >= siteElems.length-1) {
+                nextSite = 0
+            } else if (nextSite < 0) {
+                nextSite = siteElems.length - 1
+            }
+
+            selectSite(nextSite)
         }
 
         if ((e.ctrlKey && !isMacOS) || (e.metaKey && isMacOS)) {
             switch (String.fromCharCode(e.keyCode)) {
             case 'R':
-                e.preventDefault()
+                if (e.preventDefault) e.preventDefault()
                 e.shiftKey ? ipcRenderer.send('reload') : sites[activeSite].webview[0].reload()
                 break
             case 'D':
-                e.preventDefault()
+                if (e.preventDefault) e.preventDefault()
                 ipcRenderer.send('toggle-devtools')
                 break
             case 'X':
-                e.preventDefault()
+                if (e.preventDefault) e.preventDefault()
                 siteElems[activeSite].webview[0].cut()
                 break
             case 'C':
-                e.preventDefault()
+                if (e.preventDefault) e.preventDefault()
                 siteElems[activeSite].webview[0].copy()
                 break
             case 'V':
-                e.preventDefault()
+                if (e.preventDefault) e.preventDefault()
                 siteElems[activeSite].webview[0].paste()
                 break
             case 'A':
-                e.preventDefault()
+                if (e.preventDefault) e.preventDefault()
                 siteElems[activeSite].webview[0].selectAll()
                 break
             case 'Y':
-                e.preventDefault()
+                if (e.preventDefault) e.preventDefault()
                 siteElems[activeSite].webview[0].redo()
                 break
             case 'Z':
-                e.preventDefault()
+                if (e.preventDefault) e.preventDefault()
                 siteElems[activeSite].webview[0].undo()
                 break
             }
             if (e.keyCode >= 49 && e.keyCode <= 57) {
-                e.preventDefault()
+                if (e.preventDefault) e.preventDefault()
                 selectSite(e.keyCode - 49)
             }
         }
-    })
+    }
+    $(document).keydown(keydown)
 
     container = $('.container')
     sidebar = $('.sidebar')
@@ -139,22 +153,19 @@ $(document).ready(() => {
             'new-window', (event) => shell.openExternal(event.url)
         )
 
-        // If this is a supported service, call a setInterval that sends
-        // a message to the webview. In unreadApi.js, the listeners are setup
-        // on their service name channel. When called, it will respond with the
-        // message count, which we then use to update the notifier bubble
-        if (supportedCountServices.indexOf(site.service) > -1) {
-            // Listen for webview's response
-            site.webview[0].addEventListener('ipc-message', (event) => {
-                if (event.channel == 'setUnreadCount') {
-                    event.args[0] > 0 ? notify(index) : site.notifier.hide()
-                }
-                if (event.channel == 'clickedNotification') {
-                    selectSite(index)
-                    ipcRenderer.send('focus')
-                }
-            })
-        }
+        // Listen for webview's response
+        site.webview[0].addEventListener('ipc-message', (event) => {
+            if (event.channel == 'setUnreadCount') {
+                event.args[0] > 0 ? notify(index) : site.notifier.hide()
+            }
+            else if (event.channel == 'clickedNotification') {
+                selectSite(index)
+                ipcRenderer.send('focus')
+            }
+            else if (event.channel == 'keydown-info') {
+                keydown(event.args[0])
+            }
+        })
 
         site.webview.on('did-finish-load', (event) => {
             site.webview[0].send("site-info", {

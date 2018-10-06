@@ -49,6 +49,16 @@ ipcRenderer.on("site-info", (event, arg) => {
     window.M3SiteInfo = arg
 })
 
+document.addEventListener('keydown', function(event) {
+    ipcRenderer.sendToHost("keydown-info", {
+        keyCode: event.keyCode,
+        ctrlKey: event.ctrlKey,
+        metaKey: event.metaKey,
+        shiftKey: event.shiftKey,
+        preventDefault: undefined
+    })
+})
+
 /*
  * This code contains event callbacks, that can check the webpage for unread
  * counts. If the service is not listed here, the app will listen to changes of

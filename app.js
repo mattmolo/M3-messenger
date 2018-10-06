@@ -121,9 +121,14 @@ $(document).ready(() => {
         site.frame.css('width', container.width())
         site.frame.css('height', container.height())
 
+        let partition = ""
+        if (site.partition) {
+            partition = `partition=persist:${site.partition}`
+        }
+
         // Append the webview itself
         site.webview = $(`
-            <webview src="${site.url}" preload="./preload.js" ></webview>
+            <webview src="${site.url}" preload="./preload.js" ${partition}></webview>
         `)
 
         // Add to the app

@@ -1,9 +1,22 @@
 [
     {
-        "site": "Gmail",
-        "url": "https://mail.google.com/",
+        "site": "Gmail - mmolo99@gmail.com",
+        "url": "https://mail.google.com/mail/",
         "icon": "./icons/gmail.png",
         "service": "gmail"
+    },
+    {
+        "site": "Gmail - matt@mattmolo.com",
+        "url": "https://mail.google.com/mail/",
+        "icon": "./icons/gmail.png",
+        "service": "gmail",
+        "partition": "mattmolo.com"
+    },
+    {
+        "site": "Google Calendar",
+        "url": "https://calendar.google.com/",
+        "icon": "./icons/gcal.png",
+        "service": "gcal"
     },
     {
         "site": "Hangouts",
@@ -38,8 +51,8 @@
     {
         "site": "Android Messenger",
         "url": "https://messages.android.com/",
-        "icon": "./icons/messenger.png",
-        "service": "facebook"
+        "icon": "./icons/messages.png",
+        "service": "messages"
     },
     {
         "site": "Messenger",

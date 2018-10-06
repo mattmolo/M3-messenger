@@ -95,6 +95,11 @@ $(document).ready(() => {
 
     sites.forEach((site, index) => {
 
+        let savedSlackIcon = localStorage.getItem(site.site)
+        if (savedSlackIcon) {
+            site.icon = savedSlackIcon
+        }
+
         //Add the sidebar selector
         site.selector = $(`
             <div class="sites" title="${site.site}">
@@ -139,6 +144,19 @@ $(document).ready(() => {
             site.webview[0].addEventListener('ipc-message', (event) => {
                 if (event.channel == 'setUnreadCount') {
                     event.args[0] > 0 ? notify(index) : site.notifier.hide()
+                }
+            })
+        }
+
+        if (site.service == 'slack') {
+            site.webview.on('did-finish-load', (event) => {
+                site.webview[0].send("slack-icon")
+            })
+            site.webview[0].addEventListener('ipc-message', (event) => {
+                if (event.channel == 'slackTeamIcon') {
+                    site.icon = event.args[0]
+                    localStorage.setItem(site.site, site.icon)
+                    site.selector[0].children[0].style.backgroundImage = `url("${site.icon}")`
                 }
             })
         }

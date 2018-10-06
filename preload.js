@@ -6,16 +6,57 @@
 
 const { ipcRenderer } = require("electron");
 
-/*
- * This code contains event callbacks, that can check the webpage
- * for unread counts. If the service is not listed here, the app
- * will listen to changes of the title for webpage updates. The
- * callback should listen on the service name, which matches the
- * service defined in the site.json. The last line must be
- * ipcRenderer.sendToHost("setUnreadCount", count)
- * to respond to the app how many messages there are.
-*/
 
+/* This redefines the notification class, to capture the notification and
+ * allows us to make edits. In this case, we can set the icon to the team's
+ * slack icon. We'd also be able to change the on click handler, so that we can
+ * switch to the right site when it is clicked. Right now only icons that are
+ * hosted somewhere (slack icons) work.  This is because the local file path in
+ * sites.json doesn't work in the webview.
+ */
+const OldNotify = window.Notification;
+class NewNotify {
+    constructor(title, options) {
+
+        // Override the icon to our icons
+        options.icon = `${window.M3SiteInfo.icon}`
+
+        let not = new OldNotify(title, options)
+
+        // The notification onclick is set *after* the notification is
+        // returned. Thus, we wait a small amount of time and then override it.
+        setTimeout(function() {
+            not.onclick = function(e) {
+                e.preventDefault()
+                ipcRenderer.sendToHost("clickedNotification")
+            }
+        }, 100)
+
+        return not;
+    }
+}
+NewNotify.prototype.requestPermission = OldNotify.requestPermission.bind(OldNotify);
+
+Object.defineProperty(NewNotify, 'permission', {
+    get: () => {
+        return OldNotify.permission;
+    }
+});
+window.Notification = NewNotify;
+
+// Receive site info like name and icon path
+ipcRenderer.on("site-info", (event, arg) => {
+    window.M3SiteInfo = arg
+})
+
+/*
+ * This code contains event callbacks, that can check the webpage for unread
+ * counts. If the service is not listed here, the app will listen to changes of
+ * the title for webpage updates. The callback should listen on the service
+ * name, which matches the service defined in the site.json. The last line must
+ * be ipcRenderer.sendToHost("setUnreadCount", count) to respond to the app how
+ * many messages there are.
+*/
 ipcRenderer.on("slack", () => {
     var count = 0
     if (TS) count = TS.model.all_unread_cnt - TS.model.all_unread_cnt_to_exclude

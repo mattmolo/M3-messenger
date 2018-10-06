@@ -76,6 +76,10 @@ ipc.on('minimize', () => {
     mainWindow.minimize()
 })
 
+ipc.on('focus', () => {
+    mainWindow.focus()
+})
+
 ipc.on('reload', () => {
     mainWindow.reload()
 })

@@ -94,7 +94,6 @@ $(document).ready(() => {
     sidebar = $('.sidebar')
 
     sites.forEach((site, index) => {
-
         let savedSlackIcon = localStorage.getItem(site.site)
         if (savedSlackIcon) {
             site.icon = savedSlackIcon
@@ -145,8 +144,20 @@ $(document).ready(() => {
                 if (event.channel == 'setUnreadCount') {
                     event.args[0] > 0 ? notify(index) : site.notifier.hide()
                 }
+                if (event.channel == 'clickedNotification') {
+                    selectSite(index)
+                    ipcRenderer.send('focus')
+                }
             })
         }
+
+        site.webview.on('did-finish-load', (event) => {
+            site.webview[0].send("site-info", {
+                name: site.site,
+                service: site.service,
+                icon: site.icon,
+            })
+        })
 
         if (site.service == 'slack') {
             site.webview.on('did-finish-load', (event) => {

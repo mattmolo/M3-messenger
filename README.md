@@ -9,7 +9,7 @@ Set up multiple messenger services, and switch between them in one window.
 # Install and run the app
 npm install && npm run dev
 ```
-**Note:** You may need to follow the [https://github.com/nodejs/node-gyp](extra instructions)
+**Note:** You may need to follow the [extra instructions](https://github.com/nodejs/node-gyp)
 for node-gyp if you're having trouble building the app. Also, make sure your node and npm
 versions are fully up to date.
 

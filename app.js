@@ -98,7 +98,7 @@ $(document).ready(() => {
         //Add the sidebar selector
         site.selector = $(`
             <div class="sites" title="${site.site}">
-                <img class="dark" src="${site.icon}">
+                <div class="icon dark" style="background-image: url('${site.icon}')"></div>
             </div>
         `)
         site.selector.click(() => selectSite(index))
@@ -228,7 +228,7 @@ function selectSite(i) {
         }
 
         // Darken the site icon
-        activeSiteElem.selector.find('img').addClass('dark')
+        activeSiteElem.selector.find('.icon').addClass('dark')
     }
 
 
@@ -243,7 +243,7 @@ function selectSite(i) {
     site.webview.focus()
 
     // Remove the darken class from the selected icon
-    site.selector.find('img').removeClass('dark')
+    site.selector.find('.icon').removeClass('dark')
 
     // Get the frame's actual title. Needs work on autoupdated on the webviews' update
     // title = $(`.frame-container[data-site=${i}] > webview`)[0].getTitle()

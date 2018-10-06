@@ -18,12 +18,7 @@ const { ipcRenderer } = require("electron");
 
 ipcRenderer.on("slack", () => {
     var count = 0
-    $(".unread_msgs").each(function() {
-        count += isNaN(parseInt($(this).html())) ? 0 : parseInt($(this).html())
-    });
-    $(".unread_highlights").each(function() {
-        count += isNaN(parseInt($(this).html())) ? 0 : parseInt($(this).html())
-    });
+    if (TS) count = TS.model.all_unread_cnt
 
     ipcRenderer.sendToHost("setUnreadCount", count)
 })

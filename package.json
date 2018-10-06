@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "electron-editor-context-menu": "*",
+    "electron-json-config": "^1.5.3",
     "electron-spell-check-provider": "*",
     "electron-window-state": "*"
   }

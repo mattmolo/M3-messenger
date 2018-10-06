@@ -1,7 +1,12 @@
-
-//TODO: Grab this from db or local configuration
-let sites = require('./sites.json')
 const {shell, app, ipcRenderer} = require('electron')
+const config = require('electron-json-config')
+
+if (!config.has('sites')) {
+    const defaults = require('./sites_default.json')
+    config.set('sites', defaults)
+}
+
+let sites = config.get('sites')
 
 let siteElems = []
 let activeSite = 0
@@ -50,12 +55,12 @@ $(document).ready(() => {
 
         // Tab switching
         if ((e.ctrlKey && e.keyCode == '9')) {
-            let nextSite = activeSite + e.shiftKey ? -1 : 1;
+            let nextSite = activeSite + (e.shiftKey ? -1 : 1);
 
-            if (activeSite >= siteElems.length-1) {
+            if (nextSite > sites.length-1) {
                 nextSite = 0
             } else if (nextSite < 0) {
-                nextSite = siteElems.length - 1
+                nextSite = sites.length - 1
             }
 
             selectSite(nextSite)
@@ -66,26 +71,6 @@ $(document).ready(() => {
             case 'R':
                 if (e.preventDefault) e.preventDefault()
                 e.shiftKey ? ipcRenderer.send('reload') : sites[activeSite].webview[0].reload()
-                break
-            case 'D':
-                if (e.preventDefault) e.preventDefault()
-                ipcRenderer.send('toggle-devtools')
-                break
-            case 'X':
-                if (e.preventDefault) e.preventDefault()
-                siteElems[activeSite].webview[0].cut()
-                break
-            case 'C':
-                if (e.preventDefault) e.preventDefault()
-                siteElems[activeSite].webview[0].copy()
-                break
-            case 'V':
-                if (e.preventDefault) e.preventDefault()
-                siteElems[activeSite].webview[0].paste()
-                break
-            case 'A':
-                if (e.preventDefault) e.preventDefault()
-                siteElems[activeSite].webview[0].selectAll()
                 break
             case 'Y':
                 if (e.preventDefault) e.preventDefault()
@@ -226,6 +211,9 @@ $(document).ready(() => {
     // Call active site on focus, this helps focus textboxes
     // when switching between windows
     ipcRenderer.on('focus', () => selectSite(activeSite))
+
+    // This event comes from the reload in the menu
+    ipcRenderer.on('reload', () => siteElems[activeSite].webview[0].reload())
 
     // On Windows 10 (8.1? maybe), it hides 5px when the window is maximized. So,
     // listen for when the window has been maximized or unmaximized to add a 5px border

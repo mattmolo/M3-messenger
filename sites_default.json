@@ -1,0 +1,32 @@
+[
+    {
+        "site": "Gmail",
+        "url": "https://mail.google.com/mail/",
+        "icon": "./icons/gmail.png",
+        "service": "gmail"
+    },
+    {
+        "site": "Google Calendar",
+        "url": "https://calendar.google.com/",
+        "icon": "./icons/gcal.png",
+        "service": "gcal"
+    },
+    {
+        "site": "Hangouts",
+        "url": "https://hangouts.google.com/",
+        "icon": "./icons/hangouts.png",
+        "service": "hangouts"
+    },
+    {
+        "site": "Android Messenger",
+        "url": "https://messages.android.com/",
+        "icon": "./icons/messages.png",
+        "service": "messages"
+    },
+    {
+        "site": "Messenger",
+        "url": "https://www.messenger.com/",
+        "icon": "./icons/messenger.png",
+        "service": "facebook"
+    }
+]

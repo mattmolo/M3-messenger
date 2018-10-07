@@ -309,4 +309,4 @@ function notify(i) {
     if (activeSite != i) {
         siteElems[i].notifier.show()
     }
-
+}

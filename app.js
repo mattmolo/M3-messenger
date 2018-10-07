@@ -273,7 +273,7 @@ function selectSite(i) {
     site.frame.css('height', '')
 
     // Focus puts you back into the app, not on the sidebar
-    site.webview.focus()
+    site.webview[0].focus()
 
     // Remove the darken class from the selected icon
     site.selector.find('.icon').removeClass('dark')
@@ -309,4 +309,4 @@ function notify(i) {
     if (activeSite != i) {
         siteElems[i].notifier.show()
     }
-}
+
